@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders · Golden Crumb</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <section class="section">
+    <h2>Incoming orders ({{ orders|length }})</h2>
+    {# Jinja template tags (the curly-brace ones) are filled in by Python on the server before the page is sent. #}
+    {% if orders %}
+    <div class="table-wrap">
+      <table>
+        <tr><th>Placed</th><th>Customer</th><th>Item</th><th>Qty</th><th>Total</th><th>Pickup</th><th>Notes</th></tr>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o.created_at }}</td>
+          <td>{{ o.customer }}<br><span class="muted">{{ o.email }}</span></td>
+          <td>{{ o.product }}</td>
+          <td>{{ o.quantity }}</td>
+          <td>${{ "%.2f"|format(o.total) }}</td>
+          <td>{{ o.pickup_date }}</td>
+          <td>{{ o.notes }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% else %}
+      <p class="muted">No orders yet. Place one from the <a href="/#order">home page</a>.</p>
+    {% endif %}
+    <p><a href="/">← Back to site</a></p>
+  </section>
+</body>
+</html>

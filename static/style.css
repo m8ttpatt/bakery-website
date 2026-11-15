@@ -1,0 +1,94 @@
+/* CSS — controls how everything LOOKS. Change these variables to re-theme the whole site. */
+:root {
+  --cream: #fbf6ee;
+  --card: #ffffff;
+  --crust: #b5651d;
+  --crust-dark: #8a4a12;
+  --ink: #2b2118;
+  --muted: #7a6a5a;
+  --line: #eadfcf;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+h1, h2, .logo { font-family: "Fraunces", Georgia, serif; }
+a { color: var(--crust-dark); }
+.muted { color: var(--muted); }
+
+/* Navigation bar */
+.nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 1.5rem; max-width: 1000px; margin: 0 auto;
+}
+.logo { font-size: 1.4rem; text-decoration: none; color: var(--ink); }
+.nav nav a { margin-left: 1.25rem; text-decoration: none; color: var(--ink); font-weight: 500; }
+.nav nav a:hover { color: var(--crust); }
+
+/* Big intro banner */
+.hero {
+  text-align: center; padding: 5rem 1.5rem 4rem; max-width: 720px; margin: 0 auto;
+}
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; color: var(--crust); font-weight: 600; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; margin: .5rem 0 1rem; }
+.lede { font-size: 1.15rem; color: var(--muted); margin-bottom: 2rem; }
+
+.btn {
+  display: inline-block; background: var(--crust); color: white; border: 0;
+  padding: .8rem 1.6rem; border-radius: 999px; font: inherit; font-weight: 600;
+  text-decoration: none; cursor: pointer; transition: background .2s;
+}
+.btn:hover { background: var(--crust-dark); }
+
+.section { max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem; }
+.section h2 { font-size: 2rem; margin-top: 0; }
+
+/* Menu cards — a responsive grid that wraps on small screens */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem;
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(80, 50, 20, .08); }
+.card .emoji { font-size: 2.4rem; }
+.card h3 { margin: .5rem 0 .25rem; }
+.card p { margin: 0 0 1rem; color: var(--muted); font-size: .95rem; }
+.card .price { font-weight: 600; color: var(--crust-dark); }
+
+/* Order form */
+.order form {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 2rem; display: grid; gap: 1rem; max-width: 560px;
+}
+label { display: grid; gap: .35rem; font-weight: 500; font-size: .95rem; }
+input, select, textarea {
+  font: inherit; padding: .65rem .8rem; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--cream);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--crust); border-color: transparent; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+#form-message { margin: 0; font-weight: 500; }
+#form-message.ok { color: #2e7d32; }
+#form-message.err { color: #c62828; }
+
+.about { max-width: 720px; }
+footer { text-align: center; padding: 2rem; color: var(--muted); border-top: 1px solid var(--line); }
+
+/* Admin orders table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: var(--card); }
+th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--line); }
+
+/* Phones */
+@media (max-width: 560px) {
+  .row { grid-template-columns: 1fr; }
+  .nav nav a { margin-left: .8rem; }
+}
