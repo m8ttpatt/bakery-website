@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo %}
+{% block title %}Cookies · mattpatt_bakes{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <nav class="shop-tabs" aria-label="Shop">
+      <a href="{{ url_for('cookies') }}" class="tab active" aria-current="page">Cookies</a>
+      <a href="{{ url_for('catering') }}" class="tab">Catering</a>
+    </nav>
+    <h1 class="page-title">Cookies</h1>
+    <p class="muted">~4-inch cookies in packs of 6, 12 or 18. Tap a flavor to order.</p>
+
+    {# One card per flavor: the for-loop below repeats the card for every product. #}
+    <div class="flavor-grid">
+      {% for c in products %}
+        <a class="flavor-card" href="{{ url_for('cookie_detail', product_id=c.id) }}">
+          {{ photo(c) }}
+          <h3>{{ c.name }}</h3>
+          <p class="from">From {{ lowest_pack_price|money }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

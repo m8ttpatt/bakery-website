@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo %}
+{% block title %}Catering · mattpatt_bakes{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <nav class="shop-tabs" aria-label="Shop">
+      <a href="{{ url_for('cookies') }}" class="tab">Cookies</a>
+      <a href="{{ url_for('catering') }}" class="tab active" aria-current="page">Catering</a>
+    </nav>
+    <h1 class="page-title">Catering</h1>
+    <p class="muted">~3-inch cookies at {{ price_each|money }} each for parties, fundraisers and school events.
+       Mix and match flavors in sets of {{ step }}.</p>
+
+    <div id="catering" data-step="{{ step }}">
+      <p class="option-label">1. Tray size</p>
+      <div class="size-options">
+        {% for size in sizes %}
+          <button type="button" class="size-btn{% if loop.first %} selected{% endif %}"
+                  data-size="{{ size }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">
+            <strong>{{ size }} cookies</strong>
+            <span>{{ (size * price_each)|money }}</span>
+          </button>
+        {% endfor %}
+      </div>
+
+      <p class="option-label">2. Choose your flavors <span class="muted" id="catering-progress"></span></p>
+      <div class="catering-grid">
+        {% for c in products %}
+          <div class="catering-flavor" data-id="{{ c.id }}">
+            {{ photo(c) }}
+            <h3>{{ c.name }}</h3>
+            <div class="stepper">
+              <button type="button" data-step="-1" aria-label="Remove {{ step }} {{ c.name }}">−</button>
+              <span class="value">0</span>
+              <button type="button" data-step="1" aria-label="Add {{ step }} {{ c.name }}">+</button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="sticky-bar">
+        <span id="catering-summary"></span>
+        <button type="button" class="btn" id="add-catering" disabled>Add to basket</button>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='catering.js') }}"></script>
+{% endblock %}

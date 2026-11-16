@@ -1,0 +1,18 @@
+{#
+  A "macro" is a reusable piece of HTML, like a function. Every cookie photo on the site
+  comes from here, so the placeholder and hover-swap work the same everywhere.
+
+  Photos live in static/images/cookies/:  <flavor>.jpg  and  <flavor>-hover.jpg
+#}
+{% macro photo(c, size="") -%}
+<div class="photo {{ size }}">
+  {%- if c.image %}
+    <img src="{{ c.image }}" alt="{{ c.name }}" loading="lazy">
+  {%- else %}
+    <div class="placeholder"><span>Photo coming soon</span></div>
+  {%- endif %}
+  {%- if c.hover_image %}
+    <img src="{{ c.hover_image }}" alt="" class="hover-img" loading="lazy">
+  {%- endif %}
+</div>
+{%- endmacro %}

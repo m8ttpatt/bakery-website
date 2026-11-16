@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Your basket · mattpatt_bakes{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <h1 class="page-title">Your basket</h1>
+
+    <!-- JavaScript (basket-page.js) shows exactly one of these three parts. -->
+    <div id="basket-empty" class="empty" hidden>
+      <p class="muted">Your basket is empty.</p>
+      <a href="{{ url_for('cookies') }}" class="btn">Shop cookies</a>
+    </div>
+
+    <div id="basket-full" class="basket-layout" hidden>
+      <div>
+        <ul id="basket-items" class="basket-items"></ul>
+        <!-- A friendly tip for big orders. It never blocks the order. -->
+        <p id="catering-hint" class="hint" data-at="{{ catering_hint_at }}" hidden>
+          Ordering for a big group? Our <a href="{{ url_for('catering') }}">catering trays</a>
+          are smaller ~3" cookies at a lower price each, made for events.
+        </p>
+      </div>
+
+      <aside class="panel checkout">
+        <h2>Checkout</h2>
+        <p class="total-line"><span>Total</span><strong id="basket-total"></strong></p>
+        <form id="checkout-form" class="stack">
+          <label>Your name <input name="customer" required autocomplete="name"></label>
+          <label>Email <input name="email" type="email" required autocomplete="email"></label>
+          <label>Phone (optional) <input name="phone" type="tel" autocomplete="tel"></label>
+          <label>Pickup date <input name="pickup_date" type="date" required></label>
+          <label>Notes (allergies, event details…) <textarea name="notes" rows="3"></textarea></label>
+          <button type="submit" class="btn wide">Place order</button>
+          <p class="small muted">Pickup in {{ pickup_location }}. We'll email you to confirm and arrange payment.</p>
+          <p id="form-message" role="status"></p>
+        </form>
+      </aside>
+    </div>
+
+    <div id="order-done" class="panel done" hidden>
+      <h2>Order placed!</h2>
+      <p id="done-message"></p>
+      <a href="{{ url_for('home') }}" class="btn">Back to home</a>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='basket-page.js') }}"></script>
+{% endblock %}

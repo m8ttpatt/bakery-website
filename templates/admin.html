@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin · mattpatt_bakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  {# Jinja template tags (the curly-brace ones) are filled in by Python on the server before the page is sent. #}
+  <header class="nav">
+    <a href="{{ url_for('admin_dashboard') }}" class="logo">mattpatt_bakes <span class="badge">admin</span></a>
+    <nav>
+      <a href="{{ url_for('home') }}">View site</a>
+      <form method="post" action="{{ url_for('admin_logout') }}" class="inline">
+        <button class="link-btn">Log out</button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="section admin">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, text in messages %}<p class="flash {{ category }}">{{ text }}</p>{% endfor %}
+    {% endwith %}
+
+    <!-- THE COUNTER: these numbers are recalculated from the database every time the page loads. -->
+    <div class="stats">
+      <div class="stat">
+        <span>Money received</span>
+        <strong>{{ revenue|money }}</strong>
+        <small>{{ paid_count }} paid orders</small>
+      </div>
+      <div class="stat">
+        <span>Ingredient costs</span>
+        <strong>{{ spent|money }}</strong>
+        <small>{{ expenses|length }} purchases</small>
+      </div>
+      <div class="stat highlight">
+        <span>Profit</span>
+        <strong>{{ profit|money }}</strong>
+        <small>received − costs</small>
+      </div>
+      <div class="stat">
+        <span>Awaiting payment</span>
+        <strong>{{ unpaid_total|money }}</strong>
+        <small>{{ unpaid_count }} unpaid orders</small>
+      </div>
+    </div>
+
+    <h2 id="orders">Orders</h2>
+    <p class="muted small">Click Paid / Unpaid to switch it. Only paid orders count toward money received.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>#</th><th>Customer</th><th>Order</th><th>Total</th><th>Due</th><th>Payment</th><th>Notes</th><th></th></tr>
+        {% for o in orders %}
+        <tr>
+          <td>{{ "%04d"|format(o.id) }}</td>
+          <td><strong>{{ o.customer }}</strong><br><span class="muted small">{{ o.contact or "" }}</span></td>
+          <td>{{ o.items }}<br>
+            <span class="tag">{{ o.order_type }}</span>
+            <span class="muted small">{{ o.cookie_count or "?" }} cookies</span></td>
+          <td><strong>{{ o.total|money }}</strong></td>
+          <td>{{ o.due_date or "—" }}<br><span class="muted small">ordered {{ o.order_date or "—" }}</span></td>
+          <td>
+            <form method="post" action="{{ url_for('admin_toggle_paid', order_id=o.id) }}">
+              <button class="pill {{ o.status }}">{{ "Paid" if o.status == "paid" else "Unpaid" }}</button>
+            </form>
+            <span class="muted small">{{ o.payment_info or "" }}</span>
+          </td>
+          <td class="small">{{ o.notes or "" }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_delete_order', order_id=o.id) }}"
+                  onsubmit="return confirm('Delete this order? This cannot be undone.')">
+              <button class="link-btn danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="muted">No orders yet.</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <details class="panel">
+      <summary>+ Add an order by hand (Instagram DMs, texts, in person)</summary>
+      <form method="post" action="{{ url_for('admin_add_order') }}" class="form-grid">
+        <label>Customer <input name="customer" required></label>
+        <label>Contact (email / phone) <input name="contact"></label>
+        <label class="wide">What they ordered <input name="items" placeholder="e.g. 12 S'mores, 12 Brookie" required></label>
+        <label>Number of cookies <input name="cookie_count" type="number" min="0"></label>
+        <label>Total price ($) <input name="total" inputmode="decimal" placeholder="48.00" required></label>
+        <label>Due date <input name="due_date" type="date"></label>
+        <label>Payment info <input name="payment_info" placeholder="cash, Venmo, check #…"></label>
+        <label class="wide">Notes <input name="notes"></label>
+        <label class="check"><input type="checkbox" name="paid"> Already paid</label>
+        <button class="btn">Add order</button>
+      </form>
+    </details>
+
+    <h2 id="expenses">Ingredients &amp; supplies</h2>
+    <form method="post" action="{{ url_for('admin_add_expense') }}" class="panel form-grid">
+      <label>Date bought <input name="purchase_date" type="date" value="{{ today }}" required></label>
+      <label>What you bought <input name="item" placeholder="e.g. 4 lb butter" required></label>
+      <label>Cost ($) <input name="amount" inputmode="decimal" placeholder="12.99" required></label>
+      <label>Notes <input name="notes" placeholder="store, which order it was for…"></label>
+      <button class="btn">Add purchase</button>
+    </form>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Date</th><th>Item</th><th>Cost</th><th>Notes</th><th></th></tr>
+        {% for e in expenses %}
+        <tr>
+          <td>{{ e.purchase_date }}</td>
+          <td>{{ e.item }}</td>
+          <td>{{ e.amount|money }}</td>
+          <td class="small">{{ e.notes or "" }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_delete_expense', expense_id=e.id) }}"
+                  onsubmit="return confirm('Delete this purchase?')">
+              <button class="link-btn danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">No purchases yet. Add your first one above.</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <h2 id="reviews">Reviews on the home page</h2>
+    <p class="muted small">Copy nice comments from Instagram here. They scroll across the home page.</p>
+    <form method="post" action="{{ url_for('admin_add_review') }}" class="panel form-grid">
+      <label>Who said it <input name="author" placeholder="@their_instagram" maxlength="80" required></label>
+      <label class="wide">What they said <textarea name="text" rows="2" maxlength="500" required></textarea></label>
+      <button class="btn">Add review</button>
+    </form>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Who</th><th>Review</th><th></th></tr>
+        {% for r in reviews %}
+        <tr>
+          <td>{{ r.author }}</td>
+          <td>{{ r.text }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_delete_review', review_id=r.id) }}"
+                  onsubmit="return confirm('Remove this review?')">
+              <button class="link-btn danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="muted">No reviews yet. The home page shows placeholder boxes until you add some.</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </main>
+</body>
+</html>

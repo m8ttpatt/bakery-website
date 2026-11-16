@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{#
+  base.html is the shared LAYOUT for every shop page: the top bar and footer live here once.
+  Each page "extends" this file and only fills in its own "content" block.
+
+  FRONTEND reminder: HTML = structure, CSS (static/style.css) = looks, JavaScript (static/*.js) = behavior.
+#}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}mattpatt_bakes{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="nav">
+    <a href="{{ url_for('home') }}" class="logo">
+      <img src="{{ url_for('static', filename='images/logo-head.png') }}" alt="" width="40" height="48">
+      mattpatt_bakes
+    </a>
+    <nav>
+      {# "Order" dropdown: opens on hover with a mouse, or on click/tap (see nav.js). #}
+      <div class="dropdown" id="order-menu">
+        <button type="button" class="dropdown-toggle{% if request.endpoint in ('cookies', 'cookie_detail', 'catering') %} active{% endif %}"
+                aria-expanded="false" aria-controls="order-menu-list">
+          Order <span class="caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="dropdown-menu" id="order-menu-list">
+          <div class="dropdown-card">
+            {# aria-current tells screen readers (and our CSS) which page you're on. #}
+            <a href="{{ url_for('cookies') }}"{% if request.endpoint in ('cookies', 'cookie_detail') %} aria-current="page"{% endif %}>
+              <strong>Cookies</strong>
+              <small>Packs of 6, 12 or 18</small>
+            </a>
+            <a href="{{ url_for('catering') }}"{% if request.endpoint == 'catering' %} aria-current="page"{% endif %}>
+              <strong>Catering</strong>
+              <small>24+ cookies for events</small>
+            </a>
+          </div>
+        </div>
+      </div>
+      <a href="{{ url_for('home') }}#about">About</a>
+      <a href="{{ url_for('basket') }}" class="basket-link">Basket <span id="basket-count" class="count" hidden>0</span></a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>© mattpatt_bakes · Pickup in {{ pickup_location }}</footer>
+
+  <!-- Little pop-up message ("Added to basket") used by the JavaScript. -->
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="{{ url_for('static', filename='nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='basket.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

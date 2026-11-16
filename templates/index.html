@@ -1,71 +1,53 @@
-<!DOCTYPE html>
-<!--
-  FRONTEND (structure) — HTML describes WHAT is on the page.
-  CSS (static/style.css) describes how it LOOKS.
-  JavaScript (static/script.js) describes how it BEHAVES.
--->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Golden Crumb Bakery</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% from "_macros.html" import photo %}
 
-  <header class="nav">
-    <a href="#" class="logo">Golden Crumb</a>
-    <nav>
-      <a href="#menu">Menu</a>
-      <a href="#order">Order</a>
-      <a href="#about">About</a>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <p class="eyebrow">Small-batch · Baked fresh daily</p>
-    <h1>Bread worth waking up for.</h1>
-    <p class="lede">Sourdough, pastries, and celebration cakes, made by hand in small batches.</p>
-    <a href="#order" class="btn">Place a pre-order</a>
-  </section>
-
-  <section id="menu" class="section">
-    <h2>This week's menu</h2>
-    <!-- Empty on purpose: JavaScript fills this in with data from the database. -->
-    <div id="product-grid" class="grid">
-      <p class="muted">Loading menu…</p>
+{% block content %}
+  <!-- FEATURE: photo on the left, the seasonal flavor on the right. -->
+  <section class="feature">
+    {{ photo(featured, "tall") }}
+    <div class="feature-text">
+      <p class="eyebrow">{{ featured_label }}</p>
+      <h1>{{ featured.name }}</h1>
+      <p class="lede">{{ featured.description }}</p>
+      <a href="{{ url_for('cookies') }}" class="btn">Order cookies</a>
     </div>
   </section>
 
-  <section id="order" class="section order">
-    <h2>Pre-order for pickup</h2>
-    <form id="order-form">
-      <label>Your name <input name="customer" required></label>
-      <label>Email <input name="email" type="email" required></label>
-      <label>Item
-        <select name="product_id" id="product-select" required></select>
-      </label>
-      <div class="row">
-        <label>Quantity <input name="quantity" type="number" min="1" max="50" value="1" required></label>
-        <label>Pickup date <input name="pickup_date" type="date" required></label>
+  <!-- REVIEWS: a strip of comment cards that slowly drifts to the right.
+       The list is drawn twice in a row; the animation slides one full copy, then loops,
+       so it looks endless. Add reviews from the admin page. -->
+  <section class="reviews" aria-labelledby="reviews-title">
+    <h2 id="reviews-title">What people are saying</h2>
+    <div class="marquee" style="--duration: {{ (reviews|length or 8) * 7 }}s">
+      <div class="marquee-track">
+        {% for copy in range(2) %}
+          <ul class="review-list" {% if copy %}aria-hidden="true"{% endif %}>
+            {% for r in reviews %}
+              <li class="review-card">
+                <p class="review-text">{{ r.text }}</p>
+                <p class="review-author">{{ r.author }}</p>
+              </li>
+            {% else %}
+              {% for n in range(8) %}
+                <li class="review-card placeholder-card">
+                  <p class="review-text">Customer review coming soon</p>
+                  <p class="review-author">@instagram_name</p>
+                </li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        {% endfor %}
       </div>
-      <label>Notes (allergies, cake message…) <textarea name="notes" rows="3"></textarea></label>
-      <button type="submit" class="btn">Send order</button>
-      <p id="form-message" role="status"></p>
-    </form>
+    </div>
   </section>
 
   <section id="about" class="section about">
-    <h2>About us</h2>
-    <p>Golden Crumb started in a home kitchen with one sourdough starter named Gerald.
-       Today we still bake everything by hand, in small batches, with local flour and butter.</p>
-    <p class="muted">Pickup: Sat & Sun, 8am–1pm</p>
+    <img src="{{ url_for('static', filename='images/logo-full.png') }}" alt="The mattpatt_bakes tiger in a chef's hat and green apron" class="about-logo" width="160" height="280">
+    <div>
+      <h2>About mattpatt_bakes</h2>
+      <p>As a teen, inspired by my sister I use every opportunity to bake.
+         I use good quality ingredients and everything I make is made with effort and love.</p>
+      <p class="muted">Pickup in {{ pickup_location }} · Sat, 10am–2pm</p>
+    </div>
   </section>
-
-  <footer>© Golden Crumb Bakery</footer>
-
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo %}
+{% block title %}{{ c.name }} · mattpatt_bakes{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <a href="{{ url_for('cookies') }}" class="back">← All cookies</a>
+
+    <div class="product-layout">
+      {{ photo(c) }}
+
+      <div class="product-info" id="product" data-product-id="{{ c.id }}" data-max-qty="{{ max_qty }}">
+        <h1>{{ c.name }}</h1>
+        <p class="muted">{{ c.description }}</p>
+        <p class="small muted">~4-inch cookies · 12 and 18 packs can be half &amp; half</p>
+
+        <!-- Pack size buttons, like picking a clothing size. -->
+        <p class="option-label">Pack size</p>
+        <div class="size-options" id="pack-sizes">
+          {% for size, pack in packs.items() %}
+            <button type="button" class="size-btn{% if loop.first %} selected{% endif %}"
+                    data-size="{{ size }}" data-price="{{ pack.price }}" data-max-flavors="{{ pack.max_flavors }}"
+                    aria-pressed="{{ 'true' if loop.first else 'false' }}">
+              <strong>{{ size }} cookies</strong>
+              <span>{{ pack.price|money }}</span>
+            </button>
+          {% endfor %}
+        </div>
+
+        {# Flavor buttons. This page's flavor starts selected, but any flavor can be picked.
+           6-packs: 1 flavor. 12 and 18 packs: up to 2 flavors, split evenly (see product.js). #}
+        <p class="option-label">Flavors <span class="muted" id="flavor-note"></span></p>
+        <div class="chips" id="flavor-chips">
+          {% for f in [c] + others %}
+            <button type="button" class="chip{% if loop.first %} selected{% endif %}"
+                    data-id="{{ f.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ f.name }}</button>
+          {% endfor %}
+        </div>
+
+        <p class="option-label">Quantity</p>
+        <div class="stepper" id="qty-stepper">
+          <button type="button" data-step="-1" aria-label="One less">−</button>
+          <span class="value" id="qty">1</span>
+          <button type="button" data-step="1" aria-label="One more">+</button>
+        </div>
+
+        <div class="add-row">
+          <button type="button" class="btn wide" id="add-to-basket">Add to basket</button>
+        </div>
+        <p class="small muted">Ordering 24 or more for an event? <a href="{{ url_for('catering') }}">See catering</a></p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='product.js') }}"></script>
+{% endblock %}

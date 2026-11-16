@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner login · mattpatt_bakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="login-wrap">
+    <form method="post" class="panel login">
+      {% if setup_mode %}
+        <h1>Create your admin password</h1>
+        <p class="muted">You only do this once. Choose a password only you know, at least 8 characters.</p>
+      {% else %}
+        <h1>Owner login</h1>
+      {% endif %}
+
+      {% if error %}<p class="flash error">{{ error }}</p>{% endif %}
+
+      <label>Password
+        <input type="password" name="password" required autofocus
+               {% if setup_mode %}minlength="8" autocomplete="new-password"{% else %}autocomplete="current-password"{% endif %}>
+      </label>
+      {% if setup_mode %}
+        <label>Type it again <input type="password" name="confirm" required autocomplete="new-password"></label>
+      {% endif %}
+
+      <button class="btn">{{ "Save password" if setup_mode else "Log in" }}</button>
+      <a href="{{ url_for('home') }}" class="small">← Back to site</a>
+    </form>
+  </main>
+</body>
+</html>

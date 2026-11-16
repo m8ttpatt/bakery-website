@@ -1,0 +1,29 @@
+Put cookie photos in this folder, named EXACTLY like this (.jpg, .png or .webp all work):
+
+Brown Butter Chocolate Chip:
+    brown-butter-chocolate-chip.jpg          <- main photo
+    brown-butter-chocolate-chip-hover.jpg    <- (optional) shown when the mouse hovers
+Red Velvet Cheesecake:
+    red-velvet-cheesecake.jpg          <- main photo
+    red-velvet-cheesecake-hover.jpg    <- (optional) shown when the mouse hovers
+Cookie Butter Stuffed Biscoff:
+    cookie-butter-stuffed-biscoff.jpg          <- main photo
+    cookie-butter-stuffed-biscoff-hover.jpg    <- (optional) shown when the mouse hovers
+S'mores:
+    s-mores.jpg          <- main photo
+    s-mores-hover.jpg    <- (optional) shown when the mouse hovers
+Cookie Monster:
+    cookie-monster.jpg          <- main photo
+    cookie-monster-hover.jpg    <- (optional) shown when the mouse hovers
+Brookie:
+    brookie.jpg          <- main photo
+    brookie-hover.jpg    <- (optional) shown when the mouse hovers
+Birthday Cake:
+    birthday-cake.jpg          <- main photo
+    birthday-cake-hover.jpg    <- (optional) shown when the mouse hovers
+Cookies n' Cream:
+    cookies-n-cream.jpg          <- main photo
+    cookies-n-cream-hover.jpg    <- (optional) shown when the mouse hovers
+
+Square photos look best. The home page uses the Biscoff photo.
+After adding photos, refresh the browser.
